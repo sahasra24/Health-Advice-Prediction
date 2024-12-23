@@ -18,6 +18,14 @@ pip --version
 
 ```
 
+## Run the project with command:
+
+
+```
+python manage.py runserver
+```
+
+
 ## Screenshots of interfaces:
  
  ### Signup Page :
