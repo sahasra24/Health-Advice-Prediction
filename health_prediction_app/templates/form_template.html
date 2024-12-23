@@ -1,0 +1,104 @@
+<!-- form_template.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <style>
+        .navbar {
+            overflow: hidden;
+            background-color: #5392ff;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+
+        .navbar a, .navbar form {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover, .navbar form:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar .logout {
+            float: right;
+        }
+
+        body {
+            padding-top: 50px; /* Adjust this value based on the height of your navbar */
+        }
+
+        .form-container div{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .form-container div {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .submit-button {
+            background-color: #5392ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #4178c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'select_attributes' %}">Home</a>
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" class="logout">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; color:inherit; cursor:pointer;">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="logout">Login</a>
+        {% endif %}
+    </div>
+
+    <h1>Input Attributes</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-container">
+            {{ form.as_p }}
+        </div>
+        <!-- Display form fields -->
+        <center>
+        <button type="submit" class="submit-button">Submit</button>
+    </center>
+    </form>
+
+    <!-- Include toaster messages -->
+    {% include 'toaster.html' %}
+</body>
+</html>

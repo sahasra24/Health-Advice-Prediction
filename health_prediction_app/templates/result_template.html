@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Advice and Precautions</title>
+    <style>
+      /* General Styles */
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        color: #74ade6;  /* Dark grey for text */
+        background-color: #ECF6FF; /* Light blue background for a clean, calming effect */
+      }
+
+      h1 {
+        text-align: center;
+        color: #1F6FA1; /* Blue shade for the main title */
+      }
+
+      h2 {
+        color: #1F6FA1; /* Blue shade for subheadings */
+        margin-top: 30px;
+      }
+
+      .section {
+        margin-bottom: 20px;
+      }
+
+      .section h3 {
+        font-size: 1.2em;
+        color: #2C6DA7; /* Slightly lighter blue for section titles */
+      }
+
+      /* Advice & Precautions Lists */
+      .advice-list, .precaution-list {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .advice-list li, .precaution-list li {
+        margin: 10px 0;
+        padding-left: 20px;
+        background-color: #E6F2FF; /* Light blue for list items */
+        border-left: 5px solid #1F6FA1; /* Blue line for a medical effect */
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .details, .steps {
+        list-style-type: none;
+        padding-left: 30px;
+      }
+
+      .details li, .steps li {
+        font-size: 0.9em;
+        color: #34495E; /* Darker grey for sublist items */
+      }
+
+      .quote-container {
+        margin-bottom: 20px;
+        background-color: #D6EAF8; /* Lighter blue for quote containers */
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #A9CCE3; /* Soft border for emphasis */
+      }
+
+      .quote {
+        font-style: italic;
+        margin-top: 5px;
+        color: #5D6D7E; /* Light greyish-blue quote color */
+      }
+
+      .author {
+        font-weight: bold;
+        color: #2980B9; /* Strong blue for author name */
+      }
+
+      .no-results {
+        color: #E74C3C; /* Red color for no results message */
+        font-style: italic;
+      }
+
+      /* Button Styles (Optional) */
+      .btn {
+        background-color: #1F6FA1; /* Blue button */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .btn:hover {
+        background-color: #15658D; /* Slightly darker blue on hover */
+      }
+
+      /* Navbar Styles */
+      .navbar {
+        overflow: hidden;
+        background-color: #2f8cd8;
+        position: inherit;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .navbar a, .navbar form {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+
+      .navbar a:hover, .navbar form:hover {
+        background-color: #ddd;
+        color: black;
+      }
+
+      .navbar .logout {
+        float: right;
+      }
+
+      .navbar .menu-icon {
+        display: none;
+      }
+
+      @media screen and (max-width: 600px) {
+        .navbar a, .navbar form {
+          float: none;
+          display: block;
+          text-align: left;
+        }
+        .navbar .logout {
+          float: none;
+        }
+        .navbar .menu-icon {
+          float: right;
+          display: block;
+        }
+      }
+
+      body {
+        padding-top: 50px; /* Adjust this value based on the height of your navbar */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <a href="{% url 'select_attributes' %}">Home</a>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="logout">
+          {% csrf_token %}
+          <button type="submit" style="background:none; border:none; color:inherit; cursor:pointer;">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="logout">Login</a>
+      {% endif %}
+      <a href="javascript:void(0);" class="menu-icon" onclick="toggleMenu()">&#9776;</a>
+    </div>
+
+    <h1>Health Advice and Precautions</h1>
+
+    <!-- Health Advice -->
+    {% if advice_results %}
+    <h2>Health Advice</h2>
+    {% for system_name, advice_list in advice_results.items %}
+    <div class="section">
+      <h3>{{ system_name }}</h3>
+      <ul class="advice-list">
+        {% for advice_dict in advice_list %}
+        <li>
+          <strong>{{ advice_dict.advice }}</strong>
+          <ul class="details">
+            {% for detail in advice_dict.details %}
+            <li>{{ detail }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="no-results">No health advice available.</p>
+    {% endif %}
+
+    <!-- Precautions -->
+    {% if precautions_results %}
+    <h2>Precautions</h2>
+    {% for system_name, precaution_list in precautions_results.items %}
+    <div class="section">
+      <h3>{{ system_name }}</h3>
+      <ul class="precaution-list">
+        {% for precaution_dict in precaution_list %}
+        <li>
+          <strong>{{ precaution_dict.precaution }}</strong>
+          <ul class="steps">
+            {% for step in precaution_dict.steps %}
+            <li>{{ step }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="no-results">No precautions available.</p>
+    {% endif %}
+
+    <!-- Statements -->
+    {% if statement_results %}
+    <h2>Your Organs are at the Right Age</h2>
+    <div>
+      {% for system_name, statement_info in statement_results.items %}
+      <div class="quote-container">
+        <div class="quote-wrapper">
+          <p>{{ statement_info.statement }}</p>
+          <div>
+            <p class="quote">"{{ statement_info.quote }}"</p>
+            <p class="author">- {{ statement_info.author }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-results">No statements available.</p>
+    {% endif %}
+
+    <!-- Include toaster messages -->
+    {% include 'toaster.html' %}
+
+    <script>
+      function toggleMenu() {
+        var x = document.getElementsByClassName("navbar")[0];
+        if (x.className === "navbar") {
+          x.className += " responsive";
+        } else {
+          x.className = "navbar";
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reverse Aging</title>
+    <style type="text/css">
+        body {
+            background-image: url("{% static 'images/3.jpg' %}");
+            background-repeat: no-repeat;
+            background-size: 60% 100%;
+            background-attachment: fixed;
+            background-position: right;
+        }
+        .login {
+            background-color: white;
+            color: rgb(70, 102, 161);
+            border-radius: 20px;
+            font-size: 18px;
+            border: none;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 100;
+        }
+        .login:hover {
+            background-color: white;
+            color: rgb(70, 102, 161);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .signup {
+            background-color: white;
+            color: rgb(70, 102, 161);
+            border-radius: 20px;
+            font-size: 18px;
+            display: inline-block;
+            border: none;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-right: 15px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .signup:hover {
+            background-color: white;
+            color: rgb(70, 102, 161);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .passkey {
+            display: inline-block;
+            color: black;
+        }
+        label {
+            width: 100px;
+            display: inline-block;
+        }
+        .username {
+            margin-bottom: 20px;
+        }
+        .div1 {
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-bottom: 15px;
+            padding-top: 15px;
+            background-color: rgb(50, 98, 187);
+            width: 400px;
+            height: 220px;
+            border-radius: 20px;
+            color: white;
+            margin-top: 190px;
+            margin-left: 170px;
+            display: inline-block;
+            position: absolute;
+            text-align: center;
+            align-items: center;
+        }
+        .div2 {
+            width: 50%;
+            float: left;
+        }
+        .div3 {
+            width: 50%;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="div1">
+            <h1 class="h1">Welcome User!</h1>
+            <form id="login-form" method="post" action="{% url 'login' %}"> <!-- Use Django's URL tag for action -->
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div>
+                    <label for="id_username">Username:</label>
+                    {{ form.username.errors }}
+                    {{ form.username }}
+                </div>
+                <div>
+                    <label for="id_password">Passkey:</label>
+                    {{ form.password.errors }}
+                    {{ form.password }}
+                </div>
+                <div class="div2">
+                    <button class="login" type="submit">Login</button>
+                </div>
+            </form>
+
+            <!-- Signup link that redirects to the signup page -->
+            <div class="div3">
+                <form action="{% url 'signup' %}"> <!-- Use Django's URL tag for action -->
+                    <button class="signup" type="submit">Signup</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Include toaster messages -->
+    {% include 'toaster.html' %}
+    
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('login-form');
+            var username = document.getElementById('id_username');
+            var passkey = document.getElementById('id_password');
+
+            form.addEventListener('submit', function(event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                }
+            });
+
+            function validateForm() {
+                var usernameValue = username.value.trim();
+                var passkeyValue = passkey.value.trim();
+
+                // Check if the username and password are empty
+                if (usernameValue === "" || passkeyValue === "") {
+                    showToast("Enter valid username and password");
+                    return false;
+                }
+                
+                // Validate length of username and password
+                if (usernameValue.length < 8) {
+                    showToast("Username is too short (minimum 8 characters)");
+                    return false;
+                }
+                if (passkeyValue.length < 5) {
+                    showToast("Password is too short (minimum 5 characters)");
+                    return false;
+                }
+
+                return true;  // Form is valid
+            }
+
+        });
+    </script>
+</body>
+</html>

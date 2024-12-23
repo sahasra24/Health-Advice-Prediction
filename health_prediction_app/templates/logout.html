@@ -1,0 +1,34 @@
+<!-- logout.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logout</title>
+    <style>
+        .logout-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .logout-button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <h1>Are you sure you want to logout?</h1>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+</body>
+</html>

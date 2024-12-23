@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reverse Aging - Signup</title>
+    <style type="text/css">
+        body {
+            background-image: url("{% static 'images/3.jpg' %}");
+            background-repeat: no-repeat;
+            background-size: 60% 100%;
+            background-attachment: fixed;
+            background-position: right;
+        }
+        .signup {
+            background-color: white;
+            color: rgb(70, 102, 161);
+            border-radius: 20px;
+            font-size: 18px;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Times New Roman', Times, serif;
+            cursor: pointer;
+        }
+        .signup:hover {
+            font-weight: bold;
+        }
+        label {
+            width: 150px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .div1 {
+            background-color: rgb(50, 98, 187);
+            width: 400px;
+            border-radius: 20px;
+            color: white;
+            margin: 20vh 54vw 20vh auto;
+            padding: 20px;
+            text-align: center;
+        }
+        a {
+            text-decoration: none; /* Remove underline */
+            color: white; /* Default link color */
+        }
+        a:visited {
+            color: rgb(202, 128, 128); /* Color for visited links */
+        }
+        /* Toaster styles */
+        .toaster {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .toast {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="div1">
+        <h1>Welcome to Signup!</h1>
+
+        <!-- The form now links to the Django signup page upon submission -->
+        <form id="signup-form" method="POST" action="{% url 'signup' %}"> 
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div>
+                <label for="id_username">Username:</label>
+                {{ form.username.errors }}
+                {{ form.username }}
+            </div>
+            <div>
+                <label for="id_password1">Password:</label>
+                
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+            <div>
+                <label for="id_password2">Password confirmation:</label>
+                
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+            <button class="signup" type="submit">Signup</button>
+        </form>
+        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+
+    <!-- Toaster container -->
+    <div class="toaster" id="toaster"></div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('signup-form');
+            var username = document.getElementById('id_username');
+            var passkey = document.getElementById('id_password1');
+            var repasskey = document.getElementById('id_password2');
+
+            form.addEventListener('submit', function(event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                }
+            });
+
+            function validateForm() {
+                var usernameValue = username.value.trim();
+                var passkeyValue = passkey.value.trim();
+                var repasskeyValue = repasskey.value.trim();
+
+                // Check if the username and password are empty
+                if (usernameValue === "" || passkeyValue === "") {
+                    showToast("Enter valid username and password");
+                    return false;
+                }
+                
+                // Validate length of username and password
+                if (usernameValue.length < 8) {
+                    showToast("Username is too short (minimum 8 characters)");
+                    return false;
+                }
+                if (passkeyValue.length < 5) {
+                    showToast("Password is too short (minimum 5 characters)");
+                    return false;
+                }
+
+                // Check if passwords match
+                if (passkeyValue !== repasskeyValue) {
+                    showToast("Passwords do not match!");
+                    return false;
+                }
+
+                return true;  // Form is valid
+            }
+
+            function showToast(message) {
+                var toaster = document.getElementById('toaster');
+                var toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerText = message;
+                toaster.appendChild(toast);
+                setTimeout(function() {
+                    toast.classList.add('show');
+                }, 100);
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                    setTimeout(function() {
+                        toaster.removeChild(toast);
+                    }, 500);
+                }, 3000);
+            }
+
+            // Display Django messages as toasts
+            {% if messages %}
+                {% for message in messages %}
+                    showToast("{{ message }}");
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
